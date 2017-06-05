@@ -19,6 +19,8 @@ case class TaskDefinition(name: String,
 
   val unqualifiedName: LocallyQualifiedName = name
 
+  override def graph = ??? // Set containing a single call of this task.
+
   def lookupFunction(knownInputs: WorkflowCoercedInputs,
                      wdlFunctions: WdlFunctions[WdlValue],
                      outputResolver: OutputResolver = NoOutputResolver,

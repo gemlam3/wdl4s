@@ -60,7 +60,7 @@ object Call {
 sealed abstract class Call(val alias: Option[String],
                            val callable: WdlCallable,
                            val inputMappings: Map[String, WdlExpression],
-                           val ast: Ast) extends GraphNodeWithInputs with WorkflowScoped {
+                           val ast: Ast) extends WdlGraphNodeWithInputs with WorkflowScoped {
   val unqualifiedName: String = alias getOrElse callable.unqualifiedName
   
   def callType: String

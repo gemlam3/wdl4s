@@ -1,7 +1,7 @@
 package wdl4s.wom.callable
 
 import lenthall.util.TryUtil
-import wdl4s.wdl.{NoLookup, WdlExpression}
+import wdl4s.wdl.{WdlGraphNode, NoLookup, WdlExpression}
 import wdl4s.wdl.expression.WdlFunctions
 import wdl4s.wdl.types.WdlType
 import wdl4s.wdl.values.WdlValue
@@ -11,6 +11,7 @@ import scala.util.Try
 
 trait Callable {
   def name: String
+  def graph: Set[_ >: WdlGraphNode]
   def inputs: Set[_ >: InputDefinition]
   def outputs: Set[OutputDefinition]
 

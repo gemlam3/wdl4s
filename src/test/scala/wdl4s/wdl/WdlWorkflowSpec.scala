@@ -70,7 +70,7 @@ class WdlWorkflowSpec extends WordSpec with Matchers {
 
     val workflowInputs = Map("main_workflow.workflow_input" -> WdlString("workflow_input"))
 
-    def outputResolverForWorkflow(workflow: WdlWorkflow)(call: GraphNode, index: Option[Int])= {
+    def outputResolverForWorkflow(workflow: WdlWorkflow)(call: WdlGraphNode, index: Option[Int])= {
       call match {
         // Main Task
         case c: Call if c == workflow.findCallByName("main_task").get =>
@@ -440,7 +440,7 @@ class WdlWorkflowSpec extends WordSpec with Matchers {
 
       val ns = WdlNamespaceWithWorkflow.load(wdl, Seq.empty).get
 
-      def outputResolver(call: GraphNode, index: Option[Int])= {
+      def outputResolver(call: WdlGraphNode, index: Option[Int])= {
         call match {
           case c: Call if c == ns.workflow.findCallByName("t").get =>
             Success(WdlCallOutputsObject(c, Map(

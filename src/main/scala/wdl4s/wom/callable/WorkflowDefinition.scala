@@ -6,7 +6,7 @@ import scala.language.postfixOps
 final case class WorkflowDefinition(name: String,
                                     inputs: Set[_ >: Callable.InputDefinition],
                                     outputs: Set[Callable.OutputDefinition],
-                                    graph: Set[_ >: GraphNode],
+                                    graph: Set[_ >: WdlGraphNode],
                                     meta: Map[String, String],
                                     parameterMeta: Map[String, String]) extends Callable {
 

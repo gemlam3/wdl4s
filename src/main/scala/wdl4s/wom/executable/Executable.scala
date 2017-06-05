@@ -1,6 +1,6 @@
 package wdl4s.wom.executable
 
-import wdl4s.wdl.GraphNode
+import wdl4s.wdl.WdlGraphNode
 import wdl4s.wom.callable.Callable
 
 /**
@@ -8,5 +8,5 @@ import wdl4s.wom.callable.Callable
   * entry point.
   */
 final case class Executable(entryPoint: Callable, callableDefinitions: Set[Callable]) {
-  def graph: GraphNode = ???
+  def graph: Set[_ >: WdlGraphNode] = entryPoint.graph
 }
