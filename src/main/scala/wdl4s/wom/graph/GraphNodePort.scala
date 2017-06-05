@@ -12,7 +12,7 @@ object GraphNodePort {
   sealed trait InputPort extends GraphNodePort {
     def name: String
     def womType: WdlType
-    def upstream: Set[OutputPort]
+    def upstream: OutputPort
   }
 
   sealed trait OutputPort extends GraphNodePort {
@@ -21,6 +21,8 @@ object GraphNodePort {
 
     // TODO: Might end up wanting a backwards link to the InputPorts that use this (eg def downstream: Set[InputPort])?
   }
+
+  final case class RequiredInputPort(graphNode: GraphNode, name: String, womType: WdlType, upstream: OutputPort) extends InputPort
 
   final case class WorkflowOutputSink(executionOutput: ExecutionOutputNode) extends InputPort {
     override val name = executionOutput.name
