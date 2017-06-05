@@ -8,7 +8,7 @@ import wdl4s.wdl.values._
 
 import scala.util.{Failure, Success, Try}
 
-class CallSpec extends WordSpec with Matchers {
+class WdlCallSpec extends WordSpec with Matchers {
 
   "evaluate its declarations" in {
     val namespace = WdlNamespaceWithWorkflow.load(SampleWdl.TaskDeclarationsWdl.wdlSource(), Seq.empty).get

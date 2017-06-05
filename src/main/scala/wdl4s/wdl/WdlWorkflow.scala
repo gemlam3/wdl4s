@@ -101,7 +101,7 @@ case class WdlWorkflow(unqualifiedName: String,
     * @param name name of call to return
     * @return Some(Call) if one with that name was found otherwise None
     */
-  def findCallByName(name: String): Option[Call] = calls.find(_.unqualifiedName == name)
+  def findCallByName(name: String): Option[WdlCall] = calls.find(_.unqualifiedName == name)
 
   /**
     * Declarations within the workflow scope (including inside scatters and ifs)
@@ -153,7 +153,7 @@ case class WdlWorkflow(unqualifiedName: String,
     def toWorkflowOutputs(scope: Scope) = {
       // Find out the number of parent scatters
       val outputs = scope match {
-        case call: Call => call.outputs
+        case call: WdlCall => call.outputs
         case outputDeclaration: Output => Seq(outputDeclaration)
           // For non output declaration, don't return an array but return the raw value
         case otherDeclaration: DeclarationInterface => Seq(otherDeclaration)
@@ -175,7 +175,7 @@ case class WdlWorkflow(unqualifiedName: String,
         case alias => alias + "." + output.fqn
       }
       namespace.resolveCallOrOutputOrDeclaration(outputFqn) match {
-        case Some(call: Call) if output.wildcard && calls.contains(call) => toWorkflowOutputs(call)
+        case Some(call: WdlCall) if output.wildcard && calls.contains(call) => toWorkflowOutputs(call)
         case Some(declaration: DeclarationInterface) if descendants.contains(declaration) => toWorkflowOutputs(declaration)
         case e => throw new SyntaxError(wdlSyntaxErrorFormatter.badOldStyleWorkflowOutput(output.ast))
       }

@@ -1,5 +1,6 @@
 package wdl4s.wom.graph
 
+import wdl4s.wdl.WdlExpression
 import wdl4s.wdl.types.WdlType
 
 sealed trait GraphNodePort {
@@ -11,14 +12,14 @@ object GraphNodePort {
   sealed trait InputPort extends GraphNodePort {
     def name: String
     def womType: WdlType
-    def prerequisites: Set[OutputPort]
+    def upstream: Set[OutputPort]
   }
 
   sealed trait OutputPort extends GraphNodePort {
     def name: String
     def womType: WdlType
 
-    // TODO: Might want a backwards link to the InputPorts that use this?
+    // TODO: Might end up wanting a backwards link to the InputPorts that use this (eg def downstream: Set[InputPort])?
   }
 
   final case class WorkflowOutputSink(executionOutput: ExecutionOutputNode) extends InputPort {
@@ -26,7 +27,7 @@ object GraphNodePort {
     override val womType = executionOutput.womType
     override val graphNode = executionOutput
 
-    override def prerequisites: Set[OutputPort] = ???
+    override def upstream: Set[OutputPort] = ??? // TODO: executionOutput.expression.prerequisiteGraphNodes
   }
 
   /**
