@@ -3,8 +3,6 @@ package wdl4s.wom.callable
 import wdl4s.wom.graph.GraphNodePort.WorkflowInputSource
 import wdl4s.wom.graph.GraphNode
 
-import scala.language.postfixOps
-
 final case class WorkflowDefinition(name: String,
                                     inputs: Set[_ <: Callable.InputDefinition],
                                     outputs: Set[Callable.OutputDefinition],
