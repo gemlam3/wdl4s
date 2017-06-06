@@ -5,6 +5,8 @@ import wdl4s.wdl.command.CommandPart
 import wdl4s.wdl.expression.WdlFunctions
 import wdl4s.wdl.util.StringUtil
 import wdl4s.wdl.values.{WdlFile, WdlValue}
+import wdl4s.wom.graph.GraphNodePort.WorkflowInputSource
+import wdl4s.wom.graph.{GraphNode, GraphNodePort, TaskCall}
 
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
@@ -15,11 +17,13 @@ case class TaskDefinition(name: String,
                           meta: Map[String, String],
                           parameterMeta: Map[String, String],
                           outputs: Set[Callable.OutputDefinition],
-                          inputs: Set[_ >: Callable.InputDefinition]) extends Callable {
+                          inputs: Set[_ <: Callable.InputDefinition]) extends Callable {
 
   val unqualifiedName: LocallyQualifiedName = name
 
-  override def graph = ??? // Set containing a single call of this task.
+  override def graph(inputLinkings: Map[Callable.InputDefinition, WorkflowInputSource]): Set[_ >: GraphNode] = {
+    Set(TaskCall(name, this, inputLinkings))
+  }
 
   def lookupFunction(knownInputs: WorkflowCoercedInputs,
                      wdlFunctions: WdlFunctions[WdlValue],

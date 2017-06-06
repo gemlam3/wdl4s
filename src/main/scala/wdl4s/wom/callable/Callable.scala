@@ -1,18 +1,26 @@
 package wdl4s.wom.callable
 
 import lenthall.util.TryUtil
-import wdl4s.wdl.{WdlGraphNode, NoLookup, WdlExpression}
+import wdl4s.wdl.{NoLookup, WdlExpression}
 import wdl4s.wdl.expression.WdlFunctions
 import wdl4s.wdl.types.WdlType
 import wdl4s.wdl.values.WdlValue
 import wdl4s.wom.callable.Callable._
+import wdl4s.wom.graph.GraphNodePort.WorkflowInputSource
+import wdl4s.wom.graph.{GraphNode, GraphNodePort}
 
 import scala.util.Try
 
 trait Callable {
   def name: String
-  def graph: Set[_ >: WdlGraphNode]
-  def inputs: Set[_ >: InputDefinition]
+
+  /**
+    * Given the linkings that can provide all inputs for this callable, generate a graph for this callable.
+    * @param inputLinkings Linkings from outputs of other graph nodes to all inputs required by this callable's definition.
+    * @return The graph of this callable.
+    */
+  def graph(inputLinkings: Map[Callable.InputDefinition, WorkflowInputSource]): Set[_ >: GraphNode]
+  def inputs: Set[_ <: InputDefinition]
   def outputs: Set[OutputDefinition]
 
   // TODO: This function probably doesn't belong here... I dunno, but just feels a bit backwards to me for a definition to be evaluating outputs?
@@ -45,8 +53,8 @@ object Callable {
     def name: String
     def womType: WdlType
   }
-  final case class DeclaredInputDefinition(name: String, womType: WdlType, expression: WdlExpression)
-  final case class RequiredInputDefinition(name: String, womType: WdlType)
+  final case class DeclaredInputDefinition(name: String, womType: WdlType, expression: WdlExpression) extends InputDefinition
+  final case class RequiredInputDefinition(name: String, womType: WdlType) extends InputDefinition
   // Might be another input definition type, InputDefinitionWithDefault
   case class OutputDefinition(name: String, womType: WdlType, expression: WdlExpression)
 }

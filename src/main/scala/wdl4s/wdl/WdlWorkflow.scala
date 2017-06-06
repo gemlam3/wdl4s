@@ -7,6 +7,7 @@ import wdl4s.wdl.expression.WdlFunctions
 import wdl4s.wdl.types.WdlType
 import wdl4s.wdl.values.WdlValue
 import wdl4s.wom.callable.WorkflowDefinition
+import wdl4s.wom.graph.GraphNode
 
 import scala.language.postfixOps
 import scala.util.Try
@@ -44,6 +45,21 @@ object WdlWorkflow {
     val parameterMeta = AstTools.wdlSectionToStringMap(ast, AstNodeName.ParameterMeta, wdlSyntaxErrorFormatter)
 
     new WdlWorkflow(name, workflowOutputsWildcards, wdlSyntaxErrorFormatter, meta, parameterMeta, ast)
+  }
+
+  def buildWomGraph(wdlWorkflow: WdlWorkflow): Set[GraphNode] = ???
+
+  /**
+    * Convert this WdlWorkflow into a wom.components.Workflow
+    */
+  def womWorkflowDefinition(wdlWorkflow: WdlWorkflow): WorkflowDefinition = {
+    WorkflowDefinition(
+      wdlWorkflow.unqualifiedName,
+      wdlWorkflow.inputs.values.map(_.toWom).toSet,
+      wdlWorkflow.outputs.map(_.toWom).toSet,
+      buildWomGraph(wdlWorkflow),
+      wdlWorkflow.meta,
+      wdlWorkflow.parameterMeta)
   }
 }
 

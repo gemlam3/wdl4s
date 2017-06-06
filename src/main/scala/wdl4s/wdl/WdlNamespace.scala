@@ -77,8 +77,7 @@ case class WdlNamespaceWithWorkflow(importedAs: Option[String],
                                     wdlSyntaxErrorFormatter: WdlSyntaxErrorFormatter,
                                     ast: Ast) extends WdlNamespace {
 
-  lazy val entryPoint = workflow.womWorkflowDefinition
-  lazy val womExecutable = Executable(entryPoint, allCallables.diff(List(entryPoint)).toSet)
+  lazy val womExecutable = Executable(workflow.womWorkflowDefinition)
 
   override val workflows = Seq(workflow)
 
