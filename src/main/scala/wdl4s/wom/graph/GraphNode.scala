@@ -7,7 +7,7 @@ trait GraphNode {
     * The set of all graph nodes which are (transitively) upstream from this one.
     */
   lazy val upstreamAncestry = calculateUpstreamAncestry(Set.empty, this)
-  lazy val upstream: Set[GraphNode] = inputPorts.flatMap(_.upstream.map(_.graphNode))
+  lazy val upstream: Set[GraphNode] = inputPorts.map(_.upstream.graphNode)
 
   /**
     * Inputs that must be available before this graph node can be run.

@@ -30,7 +30,7 @@ object GraphNodePort {
     override val womType = executionOutput.womType
     override val graphNode = executionOutput
 
-    override def upstream: Set[OutputPort] = ??? // TODO: executionOutput.expression.prerequisiteGraphNodes
+    override def upstream: OutputPort = ??? // TODO: executionOutput.expression.prerequisiteGraphNodes
   }
 
   /**
