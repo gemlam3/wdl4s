@@ -13,7 +13,7 @@ object GraphNodePort {
   sealed trait InputPort extends GraphNodePort {
     def name: String
     def womType: WdlType
-    def upstream: OutputPort
+    def upstream: Option[OutputPort]
   }
 
   sealed trait OutputPort extends GraphNodePort {
@@ -23,14 +23,19 @@ object GraphNodePort {
     // TODO: Might end up wanting a backwards link to the InputPorts that use this (eg def downstream: Set[InputPort])?
   }
 
-  final case class RequiredInputPort(graphNode: GraphNode, name: String, womType: WdlType, upstream: OutputPort) extends InputPort
+  final case class UnsatisfiedInputPort(graphNode: GraphNode, name: String, womType: WdlType) extends InputPort {
+    override def upstream = None
+  }
+  final case class SatisfiedInputPort(graphNode: GraphNode, name: String, womType: WdlType, upstreamPort: OutputPort) extends InputPort {
+    override def upstream = Option(upstreamPort)
+  }
 
   final case class WorkflowOutputSink(executionOutput: ExecutionOutputNode) extends InputPort {
     override val name = executionOutput.name
     override val womType = executionOutput.womType
     override val graphNode = executionOutput
 
-    override def upstream: OutputPort = ??? // TODO: executionOutput.expression.prerequisiteGraphNodes
+    override def upstream: Option[OutputPort] = ??? // TODO: executionOutput.expression.prerequisiteGraphNodes
   }
 
   /**

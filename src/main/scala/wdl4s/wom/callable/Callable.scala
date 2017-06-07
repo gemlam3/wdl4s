@@ -6,20 +6,14 @@ import wdl4s.wdl.expression.WdlFunctions
 import wdl4s.wdl.types.WdlType
 import wdl4s.wdl.values.WdlValue
 import wdl4s.wom.callable.Callable._
-import wdl4s.wom.graph.GraphNodePort.WorkflowInputSource
-import wdl4s.wom.graph.{GraphNode, GraphNodePort}
+import wdl4s.wom.graph.Graph
 
 import scala.util.Try
 
 trait Callable {
   def name: String
 
-  /**
-    * Given the linkings that can provide all inputs for this callable, generate a graph for this callable.
-    * @param inputLinkings Linkings from outputs of other graph nodes to all inputs required by this callable's definition.
-    * @return The graph of this callable.
-    */
-  def graph(inputLinkings: Map[Callable.InputDefinition, WorkflowInputSource]): Set[_ >: GraphNode]
+  def graph: Graph
   def inputs: Set[_ <: InputDefinition]
   def outputs: Set[OutputDefinition]
 

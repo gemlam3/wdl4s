@@ -1,7 +1,7 @@
 package wdl4s.wom.executable
 
 import wdl4s.wom.callable.Callable
-import wdl4s.wom.graph.{ExecutionInputNode, GraphNode}
+import wdl4s.wom.graph.{ExecutionInputNode, Graph}
 import wdl4s.wom.graph.GraphNodePort.WorkflowInputSource
 
 /**
@@ -9,7 +9,7 @@ import wdl4s.wom.graph.GraphNodePort.WorkflowInputSource
   * entry point.
   */
 final case class Executable(entryPoint: Callable) {
-  def graph: Set[_ >: GraphNode] = {
+  def graph: Graph = {
     val inputNodes: Map[Callable.InputDefinition, ExecutionInputNode] = entryPoint.inputs.toList.map { i =>
       i -> ExecutionInputNode(i.name, i.womType)
     }.toMap
@@ -18,6 +18,6 @@ final case class Executable(entryPoint: Callable) {
       i -> n.singleOutputPort
     }
 
-    inputNodes.values.toSet ++ entryPoint.graph(inputLinkings)
+    Graph.fromNodes(inputNodes.values.toSet ++ entryPoint.graph.nodes)
   }
 }
