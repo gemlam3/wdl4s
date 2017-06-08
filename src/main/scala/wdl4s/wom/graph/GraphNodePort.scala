@@ -1,6 +1,7 @@
 package wdl4s.wom.graph
 
 import wdl4s.wdl.types.{WdlArrayType, WdlOptionalType, WdlType}
+import wdl4s.wdl.values.WdlValue
 
 sealed trait GraphNodePort {
   def graphNode: GraphNode
@@ -15,6 +16,9 @@ object GraphNodePort {
     def womType: WdlType
     def upstream: Option[OutputPort]
   }
+  sealed trait UnconnectedInputPort extends InputPort {
+    override def upstream = None
+  }
 
   sealed trait OutputPort extends GraphNodePort {
     def name: String
@@ -23,10 +27,9 @@ object GraphNodePort {
     // TODO: Might end up wanting a backwards link to the InputPorts that use this (eg def downstream: Set[InputPort])?
   }
 
-  final case class UnsatisfiedInputPort(graphNode: GraphNode, name: String, womType: WdlType) extends InputPort {
-    override def upstream = None
-  }
-  final case class SatisfiedInputPort(graphNode: GraphNode, name: String, womType: WdlType, upstreamPort: OutputPort) extends InputPort {
+  final case class UnsatisfiedInputPort(graphNode: GraphNode, name: String, womType: WdlType) extends UnconnectedInputPort
+  final case class UnconnectedInputPortWithDefault(graphNode: GraphNode, name: String, womType: WdlType, default: WdlValue) extends UnconnectedInputPort
+  final case class ConnectedInputPort(graphNode: GraphNode, name: String, womType: WdlType, upstreamPort: OutputPort) extends InputPort {
     override def upstream = Option(upstreamPort)
   }
 

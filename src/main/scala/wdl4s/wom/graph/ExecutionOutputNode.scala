@@ -7,4 +7,7 @@ import wdl4s.wom.graph.GraphNodePort.WorkflowOutputSink
 final case class ExecutionOutputNode(name: String, womType: WdlType, expression: WdlExpression) extends GraphNode {
   override def inputPorts: Set[GraphNodePort.InputPort] = Set(WorkflowOutputSink(this))
   override def outputPorts: Set[GraphNodePort.OutputPort] = Set.empty
+
+  // TODO: Implement
+  override private[graph] def copyWithInputsReplaced(inputs: Set[GraphNodePort.InputPort]): Graph = ???
 }

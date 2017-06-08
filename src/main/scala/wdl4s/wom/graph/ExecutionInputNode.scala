@@ -7,4 +7,7 @@ final case class ExecutionInputNode(name: String, womType: WdlType) extends Grap
   override def inputPorts: Set[GraphNodePort.InputPort] = Set.empty
   override def outputPorts: Set[GraphNodePort.OutputPort] = Set(singleOutputPort)
   val singleOutputPort: WorkflowInputSource = WorkflowInputSource(this)
+
+  // TODO: If this was a validated, this would be an invalid
+  override private[graph] def copyWithInputsReplaced(inputs: Set[GraphNodePort.InputPort]) = this
 }

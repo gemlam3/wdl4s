@@ -8,6 +8,7 @@ import scala.language.postfixOps
 
 // TODO: Lots of copy/paste between the two call types. It'd be nice to abstract it out and validate that all inputs are correctly provided.
 sealed trait Call extends GraphNode {
+  def name: String
   def callType: String
   def callable: Callable
 
@@ -18,28 +19,40 @@ sealed trait Call extends GraphNode {
 
 /**
   * In WDL, a call to a task. In CWL, a task step (or single task execution, of course).
-  *
-  * @param name The name or alias of the task call
-  * @param task The definition of the task being called
   */
-case class TaskCall(name: String, task: TaskDefinition) extends Call {
+trait TaskCall extends Call {
+  def task: TaskDefinition
   override val callType = "call"
   override val callable = task
 
-  override def inputPorts: Set[GraphNodePort.InputPort] = inputMapping.values.toSet
-  override def outputPorts: Set[GraphNodePort.OutputPort] = task.outputs.map(o => DeclarationOutputPort(this, o.name, o.womType))
+  override lazy val outputPorts: Set[GraphNodePort.OutputPort] = task.outputs.map(o => DeclarationOutputPort(this, o.name, o.womType))
+  private[graph] override final def copyWithInputsReplaced(inputs: Set[InputPort]): Graph = ConnectedTaskCall(name, task, inputs)
 }
 
-/**
-  * A workflow being called or executed.
-  *
-  * @param name The name or alias of the task call
-  * @param workflow The definition of the workflow being called
-  */
-case class WorkflowCall(name: String, workflow: WorkflowDefinition) extends Call {
+private final case class UnconnectedTaskCall(name: String, task: TaskDefinition) extends TaskCall {
+  override def inputPorts: Set[GraphNodePort.InputPort] = inputMapping.values.toSet
+}
+private final case class ConnectedTaskCall(name: String, task: TaskDefinition, suppliedInputs: Set[GraphNodePort.InputPort]) extends TaskCall {
+  override def inputPorts: Set[GraphNodePort.InputPort] = suppliedInputs
+}
+
+object TaskCall {
+  def apply(name: String, task: TaskDefinition): TaskCall = UnconnectedTaskCall(name, task)
+}
+
+sealed trait WorkflowCall extends Call {
+  def workflow: WorkflowDefinition
   override val callType = "workflow"
   override val callable = workflow
 
+  override lazy val outputPorts: Set[GraphNodePort.OutputPort] = workflow.outputs.map(o => DeclarationOutputPort(this, o.name, o.womType))
+  private[graph] override final def copyWithInputsReplaced(inputs: Set[InputPort]): Graph = ConnectedWorkflowCall(name, workflow, inputs)
+}
+
+private final case class UnconnectedWorkflowCall(name: String, workflow: WorkflowDefinition) extends WorkflowCall {
   override def inputPorts: Set[GraphNodePort.InputPort] = inputMapping.values.toSet
-  override def outputPorts: Set[GraphNodePort.OutputPort] = workflow.outputs.map(o => DeclarationOutputPort(this, o.name, o.womType))
+}
+
+private final case class ConnectedWorkflowCall(name: String, workflow: WorkflowDefinition, suppliedInputs: Set[GraphNodePort.InputPort]) extends WorkflowCall {
+  override def inputPorts: Set[GraphNodePort.InputPort] = suppliedInputs
 }
