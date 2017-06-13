@@ -45,8 +45,8 @@ object Callable {
     def name: String
     def womType: WdlType
   }
-  final case class DeclaredInputDefinition(name: String, womType: WdlType, expression: WdlExpression)
-  final case class RequiredInputDefinition(name: String, womType: WdlType)
+  final case class DeclaredInputDefinition(name: String, womType: WdlType, expression: WdlExpression) extends InputDefinition
+  final case class RequiredInputDefinition(name: String, womType: WdlType) extends InputDefinition
   // Might be another input definition type, InputDefinitionWithDefault
-  case class OutputDefinition(name: String, womType: WdlType, expression: WdlExpression)
+  case class OutputDefinition(name: String, womType: WdlType, expression: WdlExpression) extends InputDefinition
 }
