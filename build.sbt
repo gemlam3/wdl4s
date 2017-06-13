@@ -9,6 +9,8 @@ scalaVersion := "2.12.1"
 
 crossScalaVersions := Seq("2.11.8", "2.12.1")
 
+resolvers += "bunny" at "https://oss.sonatype.org/content/repositories/snapshots"
+
 lazy val versionSettings = Seq(
   // Upcoming release, or current if we're on the master branch
   git.baseVersion := "0.13",
@@ -51,6 +53,7 @@ libraryDependencies ++= {
     "commons-io" % "commons-io" % "2.5",
     "org.apache.commons" % "commons-lang3" % "3.4",
     "com.github.pathikrit" %% "better-files" % "2.17.1",
+    "org.rabix" % "rabix-bindings-cwl" % "1.0.0-rc6-SNAPSHOT",
     "org.scalatest" %% "scalatest" % "3.0.1" % Test,
     "org.pegdown" % "pegdown" % "1.6.0" % Test
   )
